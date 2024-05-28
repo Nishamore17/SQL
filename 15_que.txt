@@ -1,0 +1,81 @@
+1: Display the names of all employees who are working in department number 3.
+select first_name,last_name from employees
+where department_id=3;
+
+2: Display employee number and total salary for each employee along the job wise
+select e.employee_id as empno , e.salary as total_sal, j.job_title as jobs
+from employees as e inner join jobs as j
+on e.job_id=j.job_id
+order by job_title,total_sal;
+
+3. Display the names of name and relationship of dependant between the empno working in department number 6 or 8.
+select e.employee_id as empno, d.first_name as name,d.relationship as dependancy, t.department_id as dept
+from employees as e 
+join dependents as d on e.employee_id=d.employee_id
+join department as t on e.department_id=t.department_id
+where t.department_id in (6,8);
+
+4. Display location numbers and total number of department within each location
+select location_id,count(department_name) from department
+group by location_id;
+
+5 . Display country name by citywise
+SELECT c.country_name, l.city
+FROM countries as c
+LEFT JOIN locations as l ON c.country_id = l.country_id;
+
+6. Display Emp name with respective department
+SELECT e.employee_name, d.department_name
+FROM employees as e
+RIGHT JOIN department as d ON e.department_id = department.department_id;
+
+7. Use union to join two tables
+select * from department
+union 
+select * from countries;
+
+8. Display department name which belong to europe region
+select d.department_name, r.region_name
+from department as d, regions as r
+Where r.region_name="Europe";
+
+9. Display the employee number and name of employee working in department 8.
+select employee_id, first_name from employees 
+where salary = (select max(salary) from employees
+group by department_id having department_id = 8);
+
+10.Use appropriate function and extract name from sentense.
+select substring('My name is Nisha More',11,6);
+
+11. Use Over clause for min and max salary
+SELECT
+    min_salary,    
+    max_salary,
+    SUM(min_salary) OVER() Min_Salary,
+    SUM(max_salary) OVER() Max_Salary
+FROM
+    jobs;
+
+12. Use Lead and Lag window function for location id
+SELECT
+         location_id,
+         LAG(location_id) OVER w AS 'lag',
+         LEAD(location_id)       OVER w AS 'lead',
+         val - LAG(location_id)  OVER w AS 'lag diff',
+         val - LEAD(location_id) OVER w AS 'lead diff'
+       FROM locations
+       WINDOW w AS (ORDER BY location_id);
+
+13. Use poartition by to calculate department wise profit
+SELECT
+       salary,department_id,
+       SUM(salary) OVER(PARTITION BY department_id) AS department_profit
+       FROM employees
+       ORDER BY department_id, manager_id;
+
+14. Display name of employee who is not working in HR department
+Select first_name from employees
+where dept_id notin(select dept_id from dept where dept_name!="HR")
+
+15. Display name of employee name ends with s
+select * from employees where first_name Like '%s'
